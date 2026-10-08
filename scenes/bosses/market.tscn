@@ -1,0 +1,130 @@
+[gd_scene load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://scripts/bosses/market_boss.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/health_component.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/core/hurtbox.gd" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/laser_sweep.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/market_crash.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/green_candle_rain.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/pepe_clones.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/pepe_poison.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/pepe_fake_collectible.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/trump_walls.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/trump_ground_slam.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/trump_hazard_field.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/wif_wind_gust.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/wif_tornadoes.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/pump_shockburst.tscn" id="15"]
+
+[sub_resource type="CapsuleShape3D" id="HurtShape"]
+radius = 1.3
+height = 4.0
+
+[sub_resource type="CylinderMesh" id="RobeMesh"]
+top_radius = 0.4
+bottom_radius = 2.0
+height = 4.0
+radial_segments = 24
+
+[sub_resource type="StandardMaterial3D" id="RobeMat"]
+albedo_color = Color(0.05, 0.04, 0.08, 1)
+emission_enabled = true
+emission = Color(0.3, 0.05, 0.5, 1)
+emission_energy_multiplier = 0.35
+roughness = 0.9
+
+[sub_resource type="SphereMesh" id="HoodMesh"]
+radius = 0.9
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="HoodMat"]
+albedo_color = Color(0.02, 0.02, 0.04, 1)
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="EyeMesh"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="StandardMaterial3D" id="EyeMat"]
+albedo_color = Color(0.2, 1.0, 0.4, 1)
+emission_enabled = true
+emission = Color(0.2, 1.0, 0.4, 1)
+emission_energy_multiplier = 4.0
+
+[node name="MarketBoss" type="Node3D"]
+script = ExtResource("1")
+display_name = "THE MARKET"
+intro_duration = 3.0
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2")
+max_health = 1000.0
+
+[node name="Hurtbox" type="Area3D" parent="."]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+shape = SubResource("HurtShape")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="RobeMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+mesh = SubResource("RobeMesh")
+surface_material_override/0 = SubResource("RobeMat")
+
+[node name="HoodMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+mesh = SubResource("HoodMesh")
+surface_material_override/0 = SubResource("HoodMat")
+
+[node name="EyeLeft" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 3.6, -0.75)
+mesh = SubResource("EyeMesh")
+surface_material_override/0 = SubResource("EyeMat")
+
+[node name="EyeRight" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 3.6, -0.75)
+mesh = SubResource("EyeMesh")
+surface_material_override/0 = SubResource("EyeMat")
+
+[node name="IntroCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.966, 0.259, 0, -0.259, 0.966, 0, 2.5, 6)
+current = false
+fov = 55.0
+
+[node name="HealthLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.2, 0)
+billboard = 1
+font_size = 56
+outline_size = 10
+text = "1000 / 1000"
+
+[node name="Attacks" type="Node" parent="."]
+
+[node name="LaserSweep" parent="Attacks" instance=ExtResource("4")]
+
+[node name="MarketCrash" parent="Attacks" instance=ExtResource("5")]
+
+[node name="GreenCandleRain" parent="Attacks" instance=ExtResource("6")]
+
+[node name="PepeClones" parent="Attacks" instance=ExtResource("7")]
+
+[node name="PepePoison" parent="Attacks" instance=ExtResource("8")]
+
+[node name="PepeFakeCollectible" parent="Attacks" instance=ExtResource("9")]
+
+[node name="TrumpWalls" parent="Attacks" instance=ExtResource("10")]
+
+[node name="TrumpGroundSlam" parent="Attacks" instance=ExtResource("11")]
+
+[node name="TrumpHazardField" parent="Attacks" instance=ExtResource("12")]
+
+[node name="WifWindGust" parent="Attacks" instance=ExtResource("13")]
+
+[node name="WifTornadoes" parent="Attacks" instance=ExtResource("14")]
+
+[node name="PumpShockburst" parent="Attacks" instance=ExtResource("15")]

@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/bosses/attacks/laser_sweep.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/hitbox.gd" id="2"]
+
+[sub_resource type="BoxMesh" id="BeamMesh"]
+size = Vector3(1.6, 3.0, 40.0)
+
+[sub_resource type="StandardMaterial3D" id="BeamMat"]
+transparency = 1
+albedo_color = Color(1, 0.15, 0.1, 0.55)
+emission_enabled = true
+emission = Color(1, 0.2, 0.1, 1)
+emission_energy_multiplier = 0.3
+
+[sub_resource type="BoxShape3D" id="BeamShape"]
+size = Vector3(1.6, 3.0, 40.0)
+
+[node name="LaserSweepAttack" type="Node"]
+script = ExtResource("1")
+weight = 1.0
+
+[node name="Pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="BeamMesh" type="MeshInstance3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+visible = false
+mesh = SubResource("BeamMesh")
+surface_material_override/0 = SubResource("BeamMat")
+
+[node name="Hitbox" type="Area3D" parent="Pivot/BeamMesh"]
+collision_layer = 32
+collision_mask = 4
+script = ExtResource("2")
+can_be_parried = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/BeamMesh/Hitbox"]
+shape = SubResource("BeamShape")

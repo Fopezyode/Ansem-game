@@ -1,0 +1,132 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/bosses/trump_champion.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/health_component.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/core/hurtbox.gd" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/trump_walls.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/trump_ground_slam.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/trump_hazard_field.tscn" id="6"]
+
+[sub_resource type="CapsuleShape3D" id="HurtShape"]
+radius = 0.9
+height = 3.0
+
+[sub_resource type="BoxMesh" id="SuitMesh"]
+size = Vector3(1.3, 2.0, 0.9)
+
+[sub_resource type="StandardMaterial3D" id="SuitMat"]
+albedo_color = Color(0.08, 0.09, 0.14, 1)
+emission_enabled = true
+emission = Color(0.25, 0.1, 0.4, 1)
+emission_energy_multiplier = 0.2
+roughness = 0.7
+
+[sub_resource type="SphereMesh" id="HeadMesh"]
+radius = 0.5
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="HeadMat"]
+albedo_color = Color(0.85, 0.65, 0.45, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="CrownMesh"]
+size = Vector3(0.7, 0.3, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="CrownMat"]
+albedo_color = Color(0.95, 0.8, 0.2, 1)
+emission_enabled = true
+emission = Color(0.95, 0.75, 0.15, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="BoxMesh" id="TieMesh"]
+size = Vector3(0.22, 1.1, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="TieMat"]
+albedo_color = Color(0.8, 0.1, 0.15, 1)
+roughness = 0.6
+
+[sub_resource type="SphereMesh" id="CorruptionMesh"]
+radius = 0.15
+height = 0.3
+
+[sub_resource type="StandardMaterial3D" id="CorruptionMat"]
+albedo_color = Color(0.5, 0.1, 0.7, 1)
+emission_enabled = true
+emission = Color(0.6, 0.15, 0.8, 1)
+emission_energy_multiplier = 3.0
+
+[node name="TrumpChampion" type="Node3D"]
+script = ExtResource("1")
+display_name = "TRUMP"
+intro_duration = 2.5
+can_dodge_charges = true
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2")
+max_health = 550.0
+
+[node name="Hurtbox" type="Area3D" parent="."]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+shape = SubResource("HurtShape")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="SuitMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+mesh = SubResource("SuitMesh")
+surface_material_override/0 = SubResource("SuitMat")
+
+[node name="HeadMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+mesh = SubResource("HeadMesh")
+surface_material_override/0 = SubResource("HeadMat")
+
+[node name="CrownMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+mesh = SubResource("CrownMesh")
+surface_material_override/0 = SubResource("CrownMat")
+
+[node name="TieMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.48)
+mesh = SubResource("TieMesh")
+surface_material_override/0 = SubResource("TieMat")
+
+[node name="CorruptionSpot1" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 1.7, -0.4)
+mesh = SubResource("CorruptionMesh")
+surface_material_override/0 = SubResource("CorruptionMat")
+
+[node name="CorruptionSpot2" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 1.0, -0.4)
+mesh = SubResource("CorruptionMesh")
+surface_material_override/0 = SubResource("CorruptionMat")
+
+[node name="CorruptionSpot3" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.5, 0.42)
+mesh = SubResource("CorruptionMesh")
+surface_material_override/0 = SubResource("CorruptionMat")
+
+[node name="IntroCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.99, 0.139, 0, -0.139, 0.99, 0, 1.8, 5.5)
+current = false
+fov = 55.0
+
+[node name="HealthLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+billboard = 1
+font_size = 48
+outline_size = 8
+text = "450 / 450"
+
+[node name="Attacks" type="Node" parent="."]
+
+[node name="Walls" parent="Attacks" instance=ExtResource("4")]
+
+[node name="GroundSlam" parent="Attacks" instance=ExtResource("5")]
+
+[node name="HazardField" parent="Attacks" instance=ExtResource("6")]

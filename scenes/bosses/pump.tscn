@@ -1,0 +1,132 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/bosses/pump_champion.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/core/health_component.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/core/hurtbox.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/core/hitbox.gd" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/pump_lunge.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/attacks/pump_shockburst.tscn" id="6"]
+
+[sub_resource type="CapsuleShape3D" id="HurtShape"]
+radius = 0.7
+height = 2.4
+
+[sub_resource type="CapsuleMesh" id="BodyMesh"]
+radius = 0.6
+height = 2.2
+
+[sub_resource type="StandardMaterial3D" id="BodyMat"]
+albedo_color = Color(0.15, 0.8, 0.3, 1)
+emission_enabled = true
+emission = Color(0.15, 0.8, 0.3, 1)
+emission_energy_multiplier = 0.4
+roughness = 0.6
+
+[sub_resource type="CylinderMesh" id="ChevronMesh"]
+top_radius = 0.0
+bottom_radius = 0.25
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="ChevronMat"]
+albedo_color = Color(0.95, 0.97, 0.9, 1)
+emission_enabled = true
+emission = Color(0.9, 1, 0.9, 1)
+emission_energy_multiplier = 1.2
+
+[sub_resource type="CylinderMesh" id="FlameMesh"]
+top_radius = 0.08
+bottom_radius = 0.35
+height = 0.6
+
+[sub_resource type="StandardMaterial3D" id="FlameMat"]
+albedo_color = Color(1, 0.5, 0.1, 1)
+emission_enabled = true
+emission = Color(1, 0.55, 0.1, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="SphereMesh" id="CorruptionMesh"]
+radius = 0.14
+height = 0.28
+
+[sub_resource type="StandardMaterial3D" id="CorruptionMat"]
+albedo_color = Color(0.5, 0.1, 0.7, 1)
+emission_enabled = true
+emission = Color(0.6, 0.15, 0.8, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CapsuleShape3D" id="LungeShape"]
+radius = 0.9
+height = 2.0
+
+[node name="PumpChampion" type="Node3D"]
+script = ExtResource("1")
+display_name = "PUMP"
+intro_duration = 2.2
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2")
+max_health = 380.0
+
+[node name="Hurtbox" type="Area3D" parent="."]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+shape = SubResource("HurtShape")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+mesh = SubResource("BodyMesh")
+surface_material_override/0 = SubResource("BodyMat")
+
+[node name="ChevronMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.62)
+mesh = SubResource("ChevronMesh")
+surface_material_override/0 = SubResource("ChevronMat")
+
+[node name="FlameMesh" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("FlameMesh")
+surface_material_override/0 = SubResource("FlameMat")
+
+[node name="CorruptionSpot1" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 1.6, -0.45)
+mesh = SubResource("CorruptionMesh")
+surface_material_override/0 = SubResource("CorruptionMat")
+
+[node name="CorruptionSpot2" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.9, 0.5)
+mesh = SubResource("CorruptionMesh")
+surface_material_override/0 = SubResource("CorruptionMat")
+
+[node name="LungeHitbox" type="Area3D" parent="."]
+collision_layer = 32
+collision_mask = 4
+script = ExtResource("4")
+can_be_parried = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LungeHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+shape = SubResource("LungeShape")
+
+[node name="IntroCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9945, 0.1045, 0, -0.1045, 0.9945, 0, 1.6, 5.0)
+current = false
+fov = 55.0
+
+[node name="HealthLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+billboard = 1
+font_size = 48
+outline_size = 8
+text = "380 / 380"
+
+[node name="Attacks" type="Node" parent="."]
+
+[node name="Lunge" parent="Attacks" instance=ExtResource("5")]
+
+[node name="Shockburst" parent="Attacks" instance=ExtResource("6")]
