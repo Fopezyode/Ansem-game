@@ -1,0 +1,122 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/core/arena_bounds.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/market.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/pepe.tscn" id="7"]
+[ext_resource type="Script" path="res://scripts/core/health_pickup_spawner.gd" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/trump.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/wif.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/bosses/pump.tscn" id="11"]
+[ext_resource type="Script" path="res://scripts/core/arena_evolution.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/core/encounter_director.gd" id="13"]
+
+[sub_resource type="Environment" id="Env_1"]
+background_mode = 1
+background_color = Color(0.03, 0.02, 0.06, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.25, 0.15, 0.35, 1)
+ambient_light_energy = 0.6
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.1
+tonemap_mode = 2
+
+[sub_resource type="CylinderMesh" id="FloorMesh"]
+top_radius = 18.0
+bottom_radius = 18.0
+height = 0.5
+radial_segments = 48
+
+[sub_resource type="StandardMaterial3D" id="FloorMat"]
+albedo_color = Color(0.12, 0.1, 0.16, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderShape3D" id="FloorShape"]
+radius = 18.0
+height = 0.5
+
+[node name="TestArena" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_1")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-50, -30, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="AccentLightGreen" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 3, -14)
+light_color = Color(0.2, 1.0, 0.5, 1)
+light_energy = 3.0
+omni_range = 14.0
+
+[node name="AccentLightPurple" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 3, 14)
+light_color = Color(0.6, 0.2, 0.9, 1)
+light_energy = 3.0
+omni_range = 14.0
+
+[node name="Floor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("FloorMesh")
+surface_material_override/0 = SubResource("FloorMat")
+
+[node name="FloorCollision" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("FloorShape")
+
+[node name="ArenaBounds" type="Node3D" parent="."]
+script = ExtResource("2")
+
+[node name="ArenaEvolution" type="Node" parent="."]
+script = ExtResource("12")
+wall_bounds_path = NodePath("../ArenaBounds")
+environment_path = NodePath("../WorldEnvironment")
+
+[node name="Player" parent="." instance=ExtResource("1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 8)
+
+[node name="MarketBoss" parent="." instance=ExtResource("6")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, -15)
+player_path = NodePath("../Player")
+auto_start = false
+
+[node name="PepeChampion" parent="." instance=ExtResource("7")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10, 0, -4)
+player_path = NodePath("../Player")
+auto_start = false
+
+[node name="HealthPickupSpawner" type="Node3D" parent="."]
+script = ExtResource("8")
+min_interval = 15.0
+max_interval = 20.0
+spawn_radius = 14.0
+
+[node name="TrumpChampion" parent="." instance=ExtResource("9")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -10, 0, -4)
+player_path = NodePath("../Player")
+auto_start = false
+
+[node name="WifChampion" parent="." instance=ExtResource("10")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10, 0, 10)
+player_path = NodePath("../Player")
+auto_start = false
+
+[node name="PumpChampion" parent="." instance=ExtResource("11")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -10, 0, 10)
+player_path = NodePath("../Player")
+auto_start = false
+
+[node name="EncounterDirector" type="Node" parent="."]
+script = ExtResource("13")
+player_path = NodePath("../Player")
+champion_paths = [NodePath("../PepeChampion"), NodePath("../TrumpChampion"), NodePath("../WifChampion"), NodePath("../PumpChampion")]
+market_path = NodePath("../MarketBoss")
+heal_delay = 1.5
+
+[node name="HUD" parent="." instance=ExtResource("3")]
+encounter_director_path = NodePath("../EncounterDirector")

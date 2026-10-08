@@ -1,0 +1,122 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/player/camera_rig.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/core/health_component.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/core/hurtbox.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/core/hitbox.gd" id="5"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.6
+height = 2.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1"]
+radius = 0.7
+height = 2.2
+
+[sub_resource type="StandardMaterial3D" id="Mat_Body"]
+albedo_color = Color(0.08, 0.05, 0.12, 1)
+emission_enabled = true
+emission = Color(0.35, 0.05, 0.55, 1)
+emission_energy_multiplier = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_Rider"]
+size = Vector3(0.5, 0.6, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Rider"]
+albedo_color = Color(0.85, 0.65, 0.1, 1)
+emission_enabled = true
+emission = Color(0.85, 0.65, 0.1, 1)
+emission_energy_multiplier = 0.2
+
+[sub_resource type="CylinderMesh" id="Horn_Mesh"]
+top_radius = 0.02
+bottom_radius = 0.08
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_Horn"]
+albedo_color = Color(0.1, 1.0, 0.4, 1)
+emission_enabled = true
+emission = Color(0.1, 1.0, 0.4, 1)
+emission_energy_multiplier = 1.5
+
+[sub_resource type="BoxShape3D" id="ChargeShape"]
+size = Vector3(1.4, 1.6, 1.8)
+
+[sub_resource type="SphereShape3D" id="UltimateShape"]
+radius = 3.0
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3")
+max_health = 100.0
+
+[node name="Hurtbox" type="Area3D" parent="."]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hurtbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="BullMesh" type="Node3D" parent="."]
+
+[node name="BodyMesh" type="MeshInstance3D" parent="BullMesh"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_1")
+surface_material_override/0 = SubResource("Mat_Body")
+
+[node name="RiderMesh" type="MeshInstance3D" parent="BullMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, -0.1)
+mesh = SubResource("BoxMesh_Rider")
+surface_material_override/0 = SubResource("Mat_Rider")
+
+[node name="HornLeft" type="MeshInstance3D" parent="BullMesh"]
+transform = Transform3D(0.97, 0.17, -0.17, -0.26, 0.94, 0, 0.16, 0.28, 0.94, -0.25, 1.5, 0.85)
+mesh = SubResource("Horn_Mesh")
+surface_material_override/0 = SubResource("Mat_Horn")
+
+[node name="HornRight" type="MeshInstance3D" parent="BullMesh"]
+transform = Transform3D(0.97, -0.17, 0.17, 0.26, 0.94, 0, -0.16, 0.28, 0.94, 0.25, 1.5, 0.85)
+mesh = SubResource("Horn_Mesh")
+surface_material_override/0 = SubResource("Mat_Horn")
+
+[node name="ChargeHitbox" type="Area3D" parent="BullMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, -1.4)
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("5")
+can_be_parried = false
+tag = "bull_charge"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BullMesh/ChargeHitbox"]
+shape = SubResource("ChargeShape")
+
+[node name="UltimateHitbox" type="Area3D" parent="BullMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, -1.5)
+collision_layer = 16
+collision_mask = 8
+script = ExtResource("5")
+can_be_parried = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BullMesh/UltimateHitbox"]
+shape = SubResource("UltimateShape")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("2")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+spring_length = 6.0
+collision_mask = 1
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
+current = true
+fov = 65.0
