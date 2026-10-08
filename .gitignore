@@ -1,0 +1,14 @@
+# Godot 4 project-specific ignores
+.godot/
+.import/
+export/
+*.translation
+export_presets.cfg.bak
+
+# Godot mono-specific ignores (unused, but harmless to keep out)
+.mono/
+data_*/
+
+# System / editor files
+.DS_Store
+Thumbs.db
